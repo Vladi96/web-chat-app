@@ -5,49 +5,59 @@ const http = require('http');
 
 const port = process.env.PORT || 3000;
 const app = express();
-const publicPath = path.join(__dirname,'../public');
+const publicPath = path.join(__dirname, '../public');
 const server = http.createServer(app);
 const io = socket(server);
 
-io.on('connection',(socket)=>{
+io.on('connection', function (socket) {
     console.log('Client connected to server!');
 
-    socket.emit('newMessage',{
-        from:'Vladi',
-        to: 'Simo',
-        text:'Hello my Messenger!',
-        createAt: getDate()
+    // socket.emit('newMessage', {
+    //     from: 'Vladi',
+    //     to: 'Simo',
+    //     text: 'Hello my Messenger!',
+    //     createAt: getDate()
+    // });
+
+    socket.on('createMessage', function (msg) {
+        socket.emit('newMessage', emitMessage(msg));
+        // callback('Hi from server');
     });
 
-    socket.on('createMessage',function(msg){
-        socket.emit('newMessage',emitMessage(msg));
-    });
-
-    socket.on('disconnect',function(){
+    socket.on('disconnect', function () {
         console.log('User disconnect from server!');
     });
 });
 
-function emitMessage(msg){
+function emitMessage(msg) {
     return {
-        from:msg.from,
-        to:msg.to,
-        text:msg.text,
-        createAt:{
-            date:getDate().date,
+        from: msg.from,
+        to: msg.to,
+        text: escapeHtml(msg.text),
+        createAt: {
+            date: getDate().date,
             time: getDate().time
         }
     }
 }
 
-function getDate(){
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function getDate() {
     const date = new Date();
     return {
-        date:`${('0'+ date.getDate()).slice(-2)}/${('0'+ (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`,
-        time:`${('0'+ date.getHours()).slice(-2)}:${('0'+date.getMinutes()).slice(-2)}`    
+        date: `${('0'+ date.getDate()).slice(-2)}/${('0'+ (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`,
+        time: `${('0'+ date.getHours()).slice(-2)}:${('0'+date.getMinutes()).slice(-2)}:${('0'+date.getMilliseconds()).slice(-2)}`,
     }
 }
 
 app.use(express.static(publicPath));
 
-server.listen(port);
+server.listen(port);;
