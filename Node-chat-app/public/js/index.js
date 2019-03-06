@@ -68,8 +68,12 @@ $sendLocation.on('click', function () {
 });
 
 function weather(data) {
+<<<<<<< HEAD
     // const apiUrl = 'http://localhost:3000'; // TODO: from config also
     const apiUrl = 'https://calm-shore-34441.herokuapp.com/'; //Heroku Url
+=======
+    const apiUrl = 'http://localhost:3000'; // TODO: from config also
+>>>>>>> 6d0bb2b372a42dd8a655606ae1aeb9e53bd238f8
 
     let latitude = '';
     let longitude = '';
