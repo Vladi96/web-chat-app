@@ -27,7 +27,6 @@ app.get('/current-temperature', (req, res) => {
     const lat = req.query.lat;
     const lng = req.query.lng;
 
-    // res.setHeader('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Origin', '*', 'Content-Type', 'image/gif');
 
     if (!lng || !lat) {
