@@ -6,36 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style/index.css">
-    <title>Chat App</title>
+    <title>Join | ChatApp</title>
 </head>
 
 <body>
-
-    <div class="container">
-        <div class="chat__sidebar">
-            <h3>People</h3>
-            <div id="users">
-            </div>
-        </div>
-        <div class="chat__main">
-            <ol id="messages" class="chat__messages"></ol>
-
-            <div class="chat__footer">
-                <form id="message-form">
-                    <input name="message" type="text" placeholder="Message" autofocus autocomplete="off" />
-                    <button>Send</button>
-                </form>
-                <button id="send-location">Send Geolocation</button>
-            </div>
-        </div>
-        <div class="chat__asidebar">
-            <h2>Weather: <span id="location-weather"></span>&#8451;</h2>
-            <i id="weather-ico"></i>
-            <p id="location"></p>
+    <div class="centered-form">
+        <div class="centered-form__form">
+            <form action="/chat" id="join-form">
+                <div class="form-field">
+                    <h3>Join/Create a Chat</h3>
+                </div>
+                <div class="form-field">
+                    <label for="user-name">User name:</label>
+                    <input id="userName" type="text" name="name" autofocus id="user-name">
+                </div>
+                <div class="form-field">
+                    <label for="room-number">Room name:</label>
+                    <input id="roomName" type="text" name="room" id="room-number">
+                </div>
+                <div class="form-field">
+                    <button>Create / Join</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script src="socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="./js/index.js"></script>
 </body>

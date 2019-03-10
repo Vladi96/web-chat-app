@@ -11,6 +11,11 @@ const {
     weather
 } = require('./functions');
 
+const {
+    Users
+} = require('./users');
+const User = new Users();
+
 const port = process.env.PORT || 3000;
 const app = express();
 const publicPath = path.join(__dirname, '../public');
@@ -21,6 +26,17 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     res.sendFile(publicPath + '/index.html');
+});
+
+app.get('/chat', (req, res) => {
+    const userName = req.query.name;
+    const room = req.query.room;
+
+    if ((userName && room) && userName.trim() !== '' && room.trim() !== '') {
+        res.sendFile(publicPath + '/chat.html');
+    } else {
+        res.redirect('/');
+    }
 });
 
 app.get('/current-temperature', (req, res) => {
@@ -51,20 +67,50 @@ app.get('/current-temperature', (req, res) => {
 });
 
 io.on('connection', function (socket) {
-    console.log('Client connected to server!');
 
     socket.on('createMessage', function (msg) {
-        if (msg.text.trim() !== '') {
-            io.emit('newMessage', emitMessage(msg));
+        const user = User.getUser(socket.id);
+        if (user) {
+            if (msg.text.trim() !== '') {
+                msg.from = user.name;
+                io.to(user.room).emit('newMessage', emitMessage(msg));
+            }
         }
     });
 
+    socket.on('join', (data) => {
+
+        socket.join(data.room);
+        User.removeUser(socket.id);
+        User.addUser(socket.id, data.name, data.room);
+
+        io.to(data.room).emit('UpdateUserList', User.getUserList(data.room));
+
+        socket.broadcast.to(data.room).emit('newMessage', emitMessage({
+            from: 'Admin',
+            text: `${data.name} has joined!`
+        }));
+
+    });
+
     socket.on('disconnect', function () {
-        console.log('User disconnect from server!');
+        const user = User.removeUser(socket.id);
+
+        if (user) {
+            io.to(user.room).emit('UpdateUserList', User.getUserList(user.room));
+            io.to(user.room).emit('newMessage', emitMessage({
+                from: 'Admin',
+                text: `${user.name} has left!`
+            }));
+        }
     });
 
     socket.on('geolocation', (location) => {
-        io.emit('location', generateLocation(location));
+        const user = User.getUser(socket.id);
+        if (user) {
+            location.from = user.name;
+            io.to(user.room).emit('location', generateLocation(location));
+        }
     });
 });
 

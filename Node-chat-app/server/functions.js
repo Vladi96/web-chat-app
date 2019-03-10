@@ -16,7 +16,7 @@ function generateLocation(location) {
 function emitMessage(msg) {
     return {
         from: msg.from,
-        to: msg.to,
+        // to: msg.to,
         text: escapeHtml(msg.text),
         createAt: {
             date: getDate().date,
@@ -38,7 +38,7 @@ function getDate() {
     const date = new Date();
     return {
         date: `${('0'+ date.getDate()).slice(-2)}/${('0'+ (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`,
-        time: `${('0'+ date.getHours()).slice(-2)}:${('0'+date.getMinutes()).slice(-2)}:${('0'+date.getMilliseconds()).slice(-2)}`,
+        time: `${('0'+ date.getHours()).slice(-2)}:${('0'+ date.getMinutes()).slice(-2)}`,
     }
 }
 
