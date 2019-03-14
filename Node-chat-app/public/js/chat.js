@@ -97,8 +97,8 @@ function getCelsius(degrees) {
 }
 
 function weather(data) {
-    const apiUrl = 'http://localhost:3000'; // TODO: from config also
-    // const apiUrl = 'https://calm-shore-34441.herokuapp.com'; //Heroku Url
+    // const apiUrl = 'http://localhost:3000'; // TODO: from config also
+    const apiUrl = 'https://calm-shore-34441.herokuapp.com'; //Heroku Url
 
     let latitude = '';
     let longitude = '';
