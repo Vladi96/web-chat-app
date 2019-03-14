@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "jquery": "^3.3.1",
+    "mongoose": "^5.4.19",
     "mustache": "^3.0.1",
     "node-fetch": "^2.3.0",
     "request": "^2.88.0",

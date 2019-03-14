@@ -1,4 +1,7 @@
 const fetch = require('node-fetch');
+const {
+    messageModel
+} = require('./db/models/message-model');
 
 function generateLocation(location) {
     return {
@@ -16,7 +19,6 @@ function generateLocation(location) {
 function emitMessage(msg) {
     return {
         from: msg.from,
-        // to: msg.to,
         text: escapeHtml(msg.text),
         createAt: {
             date: getDate().date,
@@ -54,8 +56,21 @@ function weather(lat, lng) {
     return promise();
 }
 
+function makeAndSaveModel(from, text, room, type, createAt) {
+    const model = new messageModel({
+        room,
+        from,
+        text,
+        type,
+        createAt
+    });
+
+    model.save();
+}
+
 module.exports = {
     generateLocation,
     emitMessage,
-    weather
+    weather,
+    makeAndSaveModel
 }
