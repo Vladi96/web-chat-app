@@ -26,13 +26,13 @@ const model = mongoose.Schema({
         type: String,
         trim: true,
         maxlength: 20
+    },
+    createAt: {
+        required: true,
+        type: String,
+        trim: true,
+        maxlength: 20
     }
-    // createdAt: {
-    //     required: true,
-    //     type: String,
-    //     trim: true,
-    //     maxlength: 20
-    // }
 });
 
 const messageModel = mongoose.model('message', model);

@@ -96,6 +96,9 @@ io.on('connection', function (socket) {
         io.to(data.room).emit('UpdateUserList', User.getUserList(data.room));
 
         if (User.getUserList(data.room).length > 1) {
+            messageModel.findOneAndDelete({
+                text: `${data.name} has joined!`
+            });
             makeAndSaveModel('Admin', `${data.name} has joined!`, data.room, 'message');
         }
 
@@ -110,9 +113,21 @@ io.on('connection', function (socket) {
             res.forEach((message) => {
                 if (message) {
                     if (message.type === 'message') {
-                        io.to(socket.id).emit('newMessage', emitMessage(message));
+                        io.to(socket.id).emit('newMessage', ({
+                            from: message.from,
+                            text: message.text,
+                            createAt: {
+                                time: message.createAt
+                            }
+                        }));
                     } else if (message.type === 'location') {
-                        io.to(socket.id).emit('location', emitMessage(message));
+                        io.to(socket.id).emit('location', ({
+                            from: message.from,
+                            url: message.text,
+                            createAt: {
+                                time: message.createAt
+                            }
+                        }));
                     }
                 }
             });
@@ -129,12 +144,22 @@ io.on('connection', function (socket) {
                     from: 'Admin',
                     text: `${user.name} has left!`
                 }));
-                makeAndSaveModel('Admin', `${user.name} has left!`, user.room, 'message')
+                messageModel.find({
+                    text: `${user.name} has left!`
+                }, (err, res) => {
+                    if (res[0]) {
+                        messageModel.findOneAndDelete({
+                            text: `${user.name} has left!`
+                        });
+                    }
+                });
+
+                makeAndSaveModel('Admin', `${user.name} has left!`, user.room, 'message');
             } else {
                 messageModel.deleteMany({
                     room: user.room
                 }, (doc) => {
-                    console.log(doc);
+                    console.log('doc');
                 });
             }
         }
@@ -146,8 +171,8 @@ io.on('connection', function (socket) {
             location.from = user.name;
             io.to(user.room).emit('location', generateLocation(location));
 
-            const url = generateLocation(location);
-            makeAndSaveModel(user.name, url.url, user.room, 'location');
+            const locationObject = generateLocation(location);
+            makeAndSaveModel(user.name, locationObject.url, user.room, 'location');
         }
     });
 });

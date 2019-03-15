@@ -56,13 +56,14 @@ function weather(lat, lng) {
     return promise();
 }
 
-function makeAndSaveModel(from, text, room, type, createAt) {
+function makeAndSaveModel(from, text, room, type) {
+    const time = getDate();
     const model = new messageModel({
         room,
         from,
         text,
         type,
-        createAt
+        createAt: time.time
     });
 
     model.save();
